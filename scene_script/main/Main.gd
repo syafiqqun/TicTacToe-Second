@@ -1,7 +1,7 @@
 extends Node2D
 
-var circle_shape = preload("res://scene_script/shape/Circle.tscn")
-var cross_shape = preload("res://scene_script/shape/Cross.tscn")
+var blue_shape = preload("res://scene_script/shape/Circle.tscn")
+var red_shape = preload("res://scene_script/shape/Cross.tscn")
 
 var grid_pos = []
 var current_pos 
@@ -15,8 +15,8 @@ var game_over = 1
 var game_draw = 2
 
 var board_state = [0, 0, 0, 0, 0, 0, 0, 0, 0]
-var circle = 1
-var cross = 2
+var blue = 1
+var red  = 2
 
 var current_grid = 0
 
@@ -40,15 +40,15 @@ func _ready():
 
 
 func _process(delta):
+	# stop all the code execution in this function
 	if stop == 1:
 		return
 	
 	if game_state == game_over:
-		print("Game Over ", player_won)
-		print(board_state)
 		game_over_pop_up()
 		stop = 1
 	
+	# if none of the player won ,the result is draw
 	if player_turn > 9:
 		game_state = game_draw
 		player_won = "draw"
@@ -70,7 +70,7 @@ func _process(delta):
 
 
 func _input(event):
-	# reload the game
+	# reload the game if game is over
 	if Input.is_action_just_pressed("ui_accept"):
 		if game_state == game_over:
 			get_tree().reload_current_scene()
@@ -96,29 +96,29 @@ func check_winning_state():
 	var d_1 = [0, 4, 8]
 	var d_2 = [6, 4, 2]
 	
-	# player 1
-	board_state_row(h_grid_1, 1, "Player_1", 1)
-	board_state_row(h_grid_2, 1, "Player_1", 2)
-	board_state_row(h_grid_3, 1, "Player_1", 3)
+	# player 1 blue color
+	board_state_row(h_grid_1, blue, "Player_1", 1)
+	board_state_row(h_grid_2, blue, "Player_1", 2)
+	board_state_row(h_grid_3, blue, "Player_1", 3)
 	
-	board_state_row(v_grid_1, 1, "Player_1", 4)
-	board_state_row(v_grid_2, 1, "Player_1", 5)
-	board_state_row(v_grid_3, 1, "Player_1", 6)
+	board_state_row(v_grid_1, blue, "Player_1", 4)
+	board_state_row(v_grid_2, blue, "Player_1", 5)
+	board_state_row(v_grid_3, blue, "Player_1", 6)
 	
-	board_state_row(d_1, 1, "Player_1", 7)
-	board_state_row(d_2, 1, "Player_1", 8)
+	board_state_row(d_1, blue, "Player_1", 7)
+	board_state_row(d_2, blue, "Player_1", 8)
 	
-	# player 2
-	board_state_row(h_grid_1, 2, "Player_2", 1)
-	board_state_row(h_grid_2, 2, "Player_2", 2)
-	board_state_row(h_grid_3, 2, "Player_2", 3)
+	# player 2 red color
+	board_state_row(h_grid_1, red, "Player_2", 1)
+	board_state_row(h_grid_2, red, "Player_2", 2)
+	board_state_row(h_grid_3, red, "Player_2", 3)
 	
-	board_state_row(v_grid_1, 2, "Player_2", 4)
-	board_state_row(v_grid_2, 2, "Player_2", 5)
-	board_state_row(v_grid_3, 2, "Player_2", 6)
+	board_state_row(v_grid_1, red, "Player_2", 4)
+	board_state_row(v_grid_2, red, "Player_2", 5)
+	board_state_row(v_grid_3, red, "Player_2", 6)
 	
-	board_state_row(d_1, 2, "Player_2", 7)
-	board_state_row(d_2, 2, "Player_2", 8)
+	board_state_row(d_1, red, "Player_2", 7)
+	board_state_row(d_2, red, "Player_2", 8)
 
 
 func board_state_row(index_state, shape, player_winner, indicator_p):
@@ -153,11 +153,11 @@ func win_indicator_show(pos_type):
 	
 	# vertical pos
 	if pos_type == 4:
-		set_win_indicator(v_f, 0)
+		set_win_indicator(v_f, 90)
 	if pos_type == 5:
-		set_win_indicator(v_s, 0)
+		set_win_indicator(v_s, 90)
 	if pos_type == 6:
-		set_win_indicator(v_t, 0)
+		set_win_indicator(v_t, 90)
 	
 	# diagonal pos
 	if pos_type == 7:
@@ -171,32 +171,38 @@ func player_turn_indicator_change():
 		if x == player_turn:
 			get_node("Indicator/Player_1").color = Color(0, 0, 1, 1)
 			get_node("Indicator/Player_2").color = Color(0.24, 0.24, 0.24, 1)
-			print("Player 1 turn")
+#			print("Player 1 turn")
 	for x in player_2_turn:
 		if x == player_turn:
 			get_node("Indicator/Player_2").color = Color(1, 0, 0, 1)
 			get_node("Indicator/Player_1").color = Color(0.24, 0.24, 0.24, 1)
-			print("Player 2 turn")
+#			print("Player 2 turn")
 
 
 func instance_shape():
 	for x in player_1_turn:
 		if x == player_turn:
-			var new_shape = circle_shape.instance()
+			
+			# add new shape to the board
+			var new_shape = blue_shape.instance()
 			new_shape.position = grid_pos[current_grid]
 			get_node("ShapeContainer").add_child(new_shape)
 			
-			board_state[current_grid] = 1
-			print("Instanced shape circle")
+			# change the board state to represent the shape taking the spot
+			board_state[current_grid] = blue
+#			print("Instanced shape circle")
 			
 	for x in player_2_turn:
 		if x == player_turn:
-			var new_shape = cross_shape.instance()
+			
+			# add new shape to the board
+			var new_shape = red_shape.instance()
 			new_shape.position = grid_pos[current_grid]
 			get_node("ShapeContainer").add_child(new_shape)
 			
-			board_state[current_grid] = 2
-			print("Instanced shape cross")
+			# change the board state to represent the shape taking the spot
+			board_state[current_grid] = red
+#			print("Instanced shape cross")
 
 
 func game_over_pop_up():
@@ -205,11 +211,12 @@ func game_over_pop_up():
 	if player_won == "draw":
 		$GameOverPopUp/GameWon.text = "Draw"
 	if player_won == "Player_1":
-		$GameOverPopUp/GameWon.text = "Player 1 Won!!!"
+		$GameOverPopUp/GameWon.text = "Player 1 [Blue] Won!!!"
 	if player_won == "Player_2":
-		$GameOverPopUp/GameWon.text = "Player 2 Won!!!"
+		$GameOverPopUp/GameWon.text = "Player 2 [Red] Won!!!"
 
 
+# area for checking the position of the mouse
 func _on_Area_1_mouse_entered():
 	current_pos = grid_pos[0]
 	current_grid = 0

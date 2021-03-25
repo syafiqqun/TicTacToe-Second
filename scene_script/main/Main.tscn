@@ -59,7 +59,7 @@ script = ExtResource( 1 )
 margin_right = 1025.0
 margin_bottom = 600.0
 mouse_filter = 2
-color = Color( 0.529412, 0.529412, 0.529412, 1 )
+color = Color( 0.494118, 0.494118, 0.494118, 1 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
